@@ -9,12 +9,12 @@ You can also include images in this folder and reference them in the markdown. E
 
 ## How it works
 
-Explain how your project works
+This project uses the on-board 8-switch on the development board to choose between 8 different modes. 
 
 ## How to test
 
-Explain how to use your project
+The MSB switch (most to the left) should be prioritized over the ones more to the right. 
 
 ## External hardware
 
-List external hardware used in your project (e.g. PMOD, LED display, etc), if any
+Only on 4-button thing is needed for mode 6: Simon Says
