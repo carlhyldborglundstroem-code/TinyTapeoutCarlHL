@@ -1,6 +1,6 @@
 # Tiny Tapeout project information
 project:
-  title:        ""      # Project title
+  title:        "8_cool_modes"      # Project title
   author:       "Carl H Lundstroem"      # Your name
   discord:      "sirschnitzel"      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
   description:  "8 different modes + century clock divider"      # One line description of what your project does
