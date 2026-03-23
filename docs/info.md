@@ -39,6 +39,8 @@ EXTRA - CENTURY CHECKER
 This is not a mode, but is always running. Using clock dividers, the chip will, after exactly 100 years, turn on io_uio_out[7], 
 which should be connected to an LED anode. Thus after 100 years the LED will light up. 
 
+![explanation](https://github.com/user-attachments/assets/9004c77a-52a7-4e89-9562-7ccc337f6302)
+
 ## How to test
 The MSB switch (most to the left) should be prioritized over the ones more to the right. Meaning mode 7 - hamming weight 
 should override any other modes, mode 6 - pulsing light should override all other modes except mode 7 and so on. 
