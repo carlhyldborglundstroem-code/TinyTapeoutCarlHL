@@ -37,9 +37,10 @@ Displays how many of the lower indexed switches are turned on (0-7)
 
 EXTRA - CENTURY CHECKER
 This is not a mode, but is always running. Using clock dividers, the chip will, after exactly 100 years, turn on io_uio_out[7], 
+![explanation](https://github.com/user-attachments/assets/78bc0898-4ab1-4533-86a8-6adf2a616056)
 which should be connected to an LED anode. Thus after 100 years the LED will light up. 
 
-![Project Explanation]([docs/explanation.jpg](https://github.com/carlhyldborglundstroem-code/TinyTapeoutCarlHL/edit/main/docs/explanation.jpg))
+![Project Explanation](https://github.com/carlhyldborglundstroem-code/TinyTapeoutCarlHL/edit/main/docs/explanation.jpg)
 
 ## How to test
 The MSB switch (most to the left) should be prioritized over the ones more to the right. Meaning mode 7 - hamming weight 
