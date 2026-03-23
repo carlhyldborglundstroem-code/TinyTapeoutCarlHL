@@ -35,9 +35,6 @@ Simple effect using PWM that varies the brightness on the 7-seg display up and d
 MODE 7 - HAMMING WEIGHT
 Displays how many of the lower indexed switches are turned on (0-7)
 
-EXTRA - CENTURY CHECKER
-This is not a mode, but is always running. Using clock dividers, the chip will, after exactly 100 years, turn on io_uio_out[7], 
-which should be connected to an LED anode. Thus after 100 years the LED will light up. 
 
 ![Project Explanation](explanation.jpg)
 
