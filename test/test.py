@@ -1,6 +1,3 @@
-# SPDX-FileCopyrightText: © 2024 Tiny Tapeout
-# SPDX-License-Identifier: Apache-2.0
-
 import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import ClockCycles, Timer
@@ -9,53 +6,58 @@ from cocotb.triggers import ClockCycles, Timer
 async def test_project(dut):
     dut._log.info("Start")
 
-    # Set the clock period (10MHz is common for simulation, or match your Chisel 2.5M cycles)
-    # Using a faster clock in sim makes the 'slow' counters move faster
+    # 100ns period = 10MHz clock
     clock = Clock(dut.clk, 100, unit="ns") 
     cocotb.start_soon(clock.start())
 
-    # Reset
-    dut._log.info("Reset")
+    # --- Reset Sequence ---
+    dut._log.info("Resetting Circuit")
     dut.ena.value = 1
     dut.ui_in.value = 0
     dut.uio_in.value = 0
     dut.rst_n.value = 0
     await ClockCycles(dut.clk, 10)
     dut.rst_n.value = 1
+    await ClockCycles(dut.clk, 1)
 
+    # --- Testing Mode 7: Hamming Weight ---
     dut._log.info("Testing Mode 7: Hamming Weight")
-    # ui_in(7) is the MSB, so 0x80 or 0b10000000 selects Mode 7.
-    # We add some other bits to count: 0b10000111 (Mode 7 + three 1s)
-    # PopCount = 4. Your code: hammingWeight = 4 - 1 = 3.
-    # In your code, is(3.U) { sevSeg := "b01001111".U } (Decimal 79)
+    # ui_in(7) is high to select Mode 7. 
+    # Input: 0b10000111 -> PopCount is 4. 
+    # Chisel Logic: switch(4 - 1) = switch(3)
+    # is(3.U) -> sevSeg = 0b01001111
+    # Final Output: ~sevSeg = 0b10110000 (Decimal 176)
     dut.ui_in.value = 0b10000111 
-    await ClockCycles(dut.clk, 2)
-    assert dut.uo_out.value == 79
+    await ClockCycles(dut.clk, 5)
+    assert int(dut.uo_out.value) == 176
     dut._log.info("Mode 7 Passed!")
 
-    dut._log.info("Testing Mode 2: Counter 0-9")
-    # Select Mode 2 by setting ui_in(2) high: 0b00000100 (Decimal 4)
-    dut.ui_in.value = 4 
-    await ClockCycles(dut.clk, 2)
-    # Initially slow is 0. is(0.U) {sevSeg := "b00111111".U} (Decimal 63)
-    assert dut.uo_out.value == 63
-    dut._log.info("Mode 2 (Initial) Passed!")
+    # --- Testing Mode 6: Pulsing Light (PWM) ---
+    dut._log.info("Testing Mode 6: Pulse Logic")
+    # ui_in = 0b01000000 (Decimal 64) selects Mode 6
+    dut.ui_in.value = 64
+    await ClockCycles(dut.clk, 5)
+    
+    # At start, brightness is 0, so pulseSignal (pwmSlice < brightness) is ALWAYS false.
+    # sevSeg is 0b11111111, but gated by pulseSignal(0), so finalSegments = 0.
+    # uo_out = ~0 = 0b11111111 (Decimal 255)
+    assert int(dut.uo_out.value) == 255
+    dut._log.info("Mode 6 Initial (Off) Passed!")
 
-    dut._log.info("Testing Mode 0: Clockwise Animation")
-    # Select Mode 0 by setting ui_in(0) high: 0b00000001 (Decimal 1)
-    # Note: Since your code prioritizes MSB, ensure all other ui_in bits are 0.
-    dut.ui_in.value = 1
-    await ClockCycles(dut.clk, 2)
-    # Initially fast is 0. is(0.U) {sevSeg := "b00000001".U} (Decimal 1)
-    assert dut.uo_out.value == 1
+    # --- Testing "All Switches Off" Idle State ---
+    dut._log.info("Testing Idle State (All switches off)")
+    dut.ui_in.value = 0
+    await ClockCycles(dut.clk, 5)
+    # Your code: Mux(anySwitchOn, ..., "b01111111")
+    assert int(dut.uo_out.value) == 127
+    dut._log.info("Idle State Passed!")
+
+    # --- Testing Mode 0: Clockwise Animation ---
+    dut._log.info("Testing Mode 0")
+    dut.ui_in.value = 1 # Select Mode 0
+    await ClockCycles(dut.clk, 5)
+    # fast=0 -> sevSeg=0b00000001. Output = ~0b00000001 = 0b11111110 (Decimal 254)
+    assert int(dut.uo_out.value) == 254
     dut._log.info("Mode 0 Passed!")
 
-    # ==========================================================
-    # PLACEHOLDER FOR SIMON SAYS (MODE 5)
-    # ==========================================================
-    # When you implement Simon Says, select it with ui_in = 32 (0b00100000)
-    # dut.ui_in.value = 32
-    # await ClockCycles(dut.clk, 10)
-    # ==========================================================
-
-    dut._log.info("All implemented tests passed!")
+    dut._log.info("All tests for current Chisel logic passed!")
