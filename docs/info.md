@@ -35,7 +35,6 @@ Simple effect using PWM that varies the brightness on the 7-seg display up and d
 MODE 7 - HAMMING WEIGHT
 Displays how many of the lower indexed switches are turned on (0-7)
 
-
 ![Project Explanation](explanation.jpg)
 
 ## How to test
