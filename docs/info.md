@@ -35,7 +35,7 @@ Simple effect using PWM that varies the brightness on the 7-seg display up and d
 MODE 7 - HAMMING WEIGHT
 Displays how many of the lower indexed switches are turned on (0-7)
 
-![Project Explanation](explanation.jpg)
+![Project Explanation](8_modes.jpg)
 
 ## How to test
 The MSB switch (most to the left) should be prioritized over the ones more to the right. Meaning mode 7 - hamming weight 
